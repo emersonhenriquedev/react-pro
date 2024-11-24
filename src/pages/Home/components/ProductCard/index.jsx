@@ -1,5 +1,6 @@
 import { IoCartOutline } from "react-icons/io5";
 import PropTypes from "prop-types";
+import formatToCurrency from "../../../../utils/formatToCurrency";
 
 export default function ProductCard({ product }) {
   return (
@@ -20,10 +21,7 @@ export default function ProductCard({ product }) {
         >
           <IoCartOutline className="text-3xl text-white" />
           <span className="text-lg font-medium">
-            {new Intl.NumberFormat("pt-BR", {
-              currency: "BRL",
-              style: "currency",
-            }).format(product.price)}
+            {formatToCurrency(product.price)}
           </span>
         </button>
       </div>

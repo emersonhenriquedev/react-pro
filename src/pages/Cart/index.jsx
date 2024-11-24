@@ -2,6 +2,7 @@ import { FaTrash } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { FiMinus } from "react-icons/fi";
 import { useState, useEffect } from "react";
+import formatToCurrency from "../../utils/formatToCurrency";
 
 const initialItems = [
   {
@@ -66,10 +67,7 @@ export default function Cart() {
       <main className="min-h-screen px-12 pt-10">
         <span className="block mb-6 text-2xl font-medium text-right">
           Total:{" "}
-          {new Intl.NumberFormat("pt-BR", {
-            currency: "BRL",
-            style: "currency",
-          }).format(total)}
+          {formatToCurrency(total)}
         </span>
         <table className="table w-full">
           <thead>
@@ -94,10 +92,7 @@ export default function Cart() {
                 </td>
                 <td>{item.name}</td>
                 <td>
-                  {new Intl.NumberFormat("pt-BR", {
-                    currency: "BRL",
-                    style: "currency",
-                  }).format(item.price)}
+                  {formatToCurrency(item.price)}
                 </td>
                 <td>
                   <div className="flex items-center gap-x-2">
@@ -124,10 +119,7 @@ export default function Cart() {
                 </td>
                 <td>
                   {" "}
-                  {new Intl.NumberFormat("pt-BR", {
-                    currency: "BRL",
-                    style: "currency",
-                  }).format(item.subtotal)}
+                  {formatToCurrency(item.subtotal)}
                 </td>
                 <td>
                   <div>
