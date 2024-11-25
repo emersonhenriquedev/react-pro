@@ -1,42 +1,18 @@
 import { FaTrash } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { FiMinus } from "react-icons/fi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import formatToCurrency from "../../utils/formatToCurrency";
-
-const initialItems = [
-  {
-    id: 1,
-    name: "Celular",
-    price: 1500,
-    qty: 2,
-    image:
-      "https://t62533.vteximg.com.br/arquivos/ids/930713-1000-1000/celular-samsung-a53-5g-128gb-dual-chip-2.jpg?v=638266913500030000",
-    created_at: "2024-11-19",
-    updated_at: "2024-11-19",
-    subtotal: 3000,
-  },
-  {
-    id: 2,
-    name: "TV",
-    price: 1200,
-    qty: 2,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCu6sgUeTmYLu3WRulbqAr6u4Tqz3UObpe8A&s",
-    created_at: "2024-11-19",
-    updated_at: "2024-11-19",
-    subtotal: 2400,
-  },
-];
+import { cartContext } from "../../contexts/cartContext";
 
 export default function Cart() {
-  const [total, setTotal] = useState(0);
-  const [items, setItems] = useState(initialItems);
+  const {items, setItems, total} = useContext(cartContext);
+  // const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-    const t = items.reduce((acc, curr) => curr.subtotal + acc, 0);
-    setTotal(t);
-  }, [items]);
+  // useEffect(() => {
+  //   const t = items.reduce((acc, curr) => curr.subtotal + acc, 0);
+  //   setTotal(t);
+  // }, [items]);
 
   function removeItem(id) {
     const newItems = items.filter((item) => item.id != id);

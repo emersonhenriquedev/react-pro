@@ -25,6 +25,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import PageLayout from "./components/PageLayout";
+import CartProvider from "./providers/CartProvider";
 
 const broswerRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -46,13 +47,15 @@ const broswerRouter = createBrowserRouter(
         <Route path="users/create" element={<CreateUser />} />
         <Route path="users/edit/:userId" element={<EditUser />} />
       </Route>
-        <Route path="/dashboard/login" index element={<DashboardLogin />} />
+      <Route path="/dashboard/login" index element={<DashboardLogin />} />
     </Route>
   )
 );
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={broswerRouter} />
+    <CartProvider>
+      <RouterProvider router={broswerRouter} />
+    </CartProvider>
   </StrictMode>
 );
