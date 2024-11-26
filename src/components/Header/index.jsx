@@ -6,7 +6,7 @@ export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
-    <header className="flex items-center justify-between px-12 py-4">
+    <header className="flex items-center justify-between">
       <Link to="/" className="text-3xl font-bold">logo</Link>
       <div className="flex items-center gap-x-3">
         <Link to="/cart">

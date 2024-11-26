@@ -11,7 +11,7 @@ export default function Cart() {
 
   return (
     <div>
-      <main className="min-h-screen px-12 pt-10">
+      <main className="min-h-screen pt-10">
         <span className="block mb-6 text-2xl font-medium text-right">
           Total: {formatToCurrency(total)}
         </span>

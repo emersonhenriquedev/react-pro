@@ -27,7 +27,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen ">
-      <main className="px-12 pt-12 pb-60">
+      <main className="pt-12 pb-60">
         <SearchBar
           onSearch={onSearchHandler}
           onChange={onChangeSearchHandler}
