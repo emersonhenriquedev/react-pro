@@ -2,40 +2,70 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schema } from "./consts";
 import { useNavigate } from "react-router-dom";
+import httpClient from "../../../../../services/axios";
+import { useState } from "react";
 
 export default function LoginCard() {
-  const { register, handleSubmit, formState: {errors} } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    navigate('/dashboard');
-    //TODO: Intregrar esse formulário
+  const onSubmit = async (data) => {
+    const body = {
+      email: data.email,
+      password: data.password,
+    };
+
+    try {
+      const response = await httpClient.post("/auth/login", body);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      const userResponse = await httpClient.get("/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (userResponse.data.role.name === "ADMIN") {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (error.status === 401) {
+        setError("E-mail ou senha incorretos");
+      }
+    }
   };
 
   return (
-    <div className="bg-white shadow-sm px-6 py-8 rounded-lg w-80">
+    <div className="px-6 py-8 bg-white rounded-lg shadow-sm w-80">
       <form onSubmit={handleSubmit(onSubmit)}>
+        <span className="inline-block mb-4 font-medium text-red-400">
+          {error}
+        </span>
         <div className="flex flex-col gap-y-1">
           <label htmlFor="email">Email</label>
           <input
             name="email"
             type="email"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Email"
             {...register("email")}
           />
           <span className="text-red-400">{errors.email?.message}</span>
         </div>
-        <div className="flex flex-col gap-y-1 mt-4">
+        <div className="flex flex-col mt-4 gap-y-1">
           <label htmlFor="password">Senha</label>
           <input
             name="password"
             type="password"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Senha"
             {...register("password")}
           />
@@ -43,7 +73,7 @@ export default function LoginCard() {
         </div>
         <button
           type="submit"
-          className="mt-7 rounded-lg bg-blue-400 w-full py-2 text-white"
+          className="w-full py-2 text-white bg-blue-400 rounded-lg mt-7"
         >
           Entrar
         </button>
