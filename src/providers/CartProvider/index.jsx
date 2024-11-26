@@ -30,8 +30,43 @@ export default function CartProvider(props) {
       setItems([...items, { ...product, qty: 1, subtotal: product.price }]);
     }
   }
+
+  function removeItem(id) {
+    const newItems = items.filter((item) => item.id != id);
+    setItems(newItems);
+  }
+
+  function incrementItem(id) {
+    const updatedItems = items.map((item) =>
+      item.id === id
+        ? { ...item, qty: item.qty + 1, subtotal: (item.qty + 1) * item.price }
+        : item
+    );
+
+    setItems(updatedItems);
+  }
+
+  function decrementItem(id) {
+    const updatedItems = items.map((item) =>
+      item.id === id && item.qty > 1
+        ? { ...item, qty: item.qty - 1, subtotal: (item.qty - 1) * item.price }
+        : item
+    );
+    setItems(updatedItems);
+  }
+
   return (
-    <cartContext.Provider value={{ items, setItems, addItem, total }}>
+    <cartContext.Provider
+      value={{
+        items,
+        setItems,
+        addItem,
+        total,
+        removeItem,
+        incrementItem,
+        decrementItem,
+      }}
+    >
       {props.children}
     </cartContext.Provider>
   );
