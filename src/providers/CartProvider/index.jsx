@@ -7,6 +7,13 @@ export default function CartProvider(props) {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    const cartItems = localStorage.getItem("cartItems");
+    if (cartItems) {
+      setItems(JSON.parse(cartItems));
+    }
+  }, []);
+
+  useEffect(() => {
     const t = items.reduce((acc, curr) => curr.subtotal + acc, 0);
     setTotal(t);
   }, [items]);
@@ -24,15 +31,18 @@ export default function CartProvider(props) {
         }
         return item;
       });
-
+      updateLocalStorage(listUpdated);
       setItems(listUpdated);
     } else {
-      setItems([...items, { ...product, qty: 1, subtotal: product.price }]);
+      const data = [...items, { ...product, qty: 1, subtotal: product.price }];
+      updateLocalStorage(data);
+      setItems(data);
     }
   }
 
   function removeItem(id) {
     const newItems = items.filter((item) => item.id != id);
+    updateLocalStorage(newItems);
     setItems(newItems);
   }
 
@@ -42,7 +52,7 @@ export default function CartProvider(props) {
         ? { ...item, qty: item.qty + 1, subtotal: (item.qty + 1) * item.price }
         : item
     );
-
+    updateLocalStorage(updatedItems);
     setItems(updatedItems);
   }
 
@@ -52,7 +62,12 @@ export default function CartProvider(props) {
         ? { ...item, qty: item.qty - 1, subtotal: (item.qty - 1) * item.price }
         : item
     );
+    updateLocalStorage(updatedItems);
     setItems(updatedItems);
+  }
+
+  function updateLocalStorage(data) {
+    localStorage.setItem("cartItems", JSON.stringify(data));
   }
 
   return (
