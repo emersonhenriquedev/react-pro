@@ -44,6 +44,7 @@ export default function UserForm(props) {
         name: user.name,
         email: user.email,
         role: user.role.id,
+        password: '****',
       });
     };
     getUser();
@@ -56,7 +57,7 @@ export default function UserForm(props) {
     };
 
     if (props.userId) {
-      alert("aqui");
+      
       try {
         const body = {
           name: data.name,
