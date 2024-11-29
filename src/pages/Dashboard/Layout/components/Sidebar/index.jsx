@@ -1,11 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaProductHunt } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
+  function logoutHandler() {
+    localStorage.removeItem('token');
+    navigate('/dashboard/login');
+  }
+
   return (
-    <aside className="fixed left-0 top-0 h-full bg-primary w-60 rounded-tr-lg rounded-br-lg p-8 shadow-lg flex flex-col justify-between">
-      <ul className="flex flex-col gap-y-3 text-white text-lg">
+    <aside className="fixed top-0 left-0 flex flex-col justify-between h-full p-8 rounded-tr-lg rounded-br-lg shadow-lg bg-primary w-60">
+      <ul className="flex flex-col text-lg text-white gap-y-3">
         <li>
           <Link to="/dashboard" className="flex items-center gap-x-2">
             <FaUser /> Usuários
@@ -25,7 +32,7 @@ export default function Sidebar() {
           </Link>
         </li>
       </ul>
-      <button type="button" className="text-red-200 text-lg  w-fit">
+      <button onClick={logoutHandler} type="button" className="text-lg text-red-200 w-fit">
         Sair
       </button>
     </aside>
