@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import httpClient from "../../../../../services/axios";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const schema = yup.object({
   name: yup
@@ -15,19 +18,57 @@ export default function CategoryForm(props) {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: { name: props.categoryId ? "default name" : undefined },
   });
 
-  function onSubmit(data) {
-    // TODO: intregar com a api
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getCategory = async () => {
+      if (!props.categoryId) return;
+      try {
+        const response = await httpClient.get(
+          `/categories/${props.categoryId}`
+        );
+        const category = response.data;
+
+        reset({
+          name: category.name,
+        });
+      } catch (error) {
+        alert("Categoria não existe.");
+        navigate("/dashboard/categories");
+      }
+    };
+    getCategory();
+  }, [props]);
+
+  async function onSubmit(data) {
+    const token = localStorage.getItem("token");
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     if (props.categoryId) {
-      // TODO: edit user
+      try {
+        await httpClient.put(`/categories/${props.categoryId}`, data, headers);
+        alert("Editado com sucesso");
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.message || "Houve um erro ao editar.");
+        navigate("/dashboard/categories");
+      }
     } else {
-      // TODO: create user
+      try {
+        await httpClient.post("/categories", data, headers);
+        navigate("/dashboard/categories");
+      } catch (error) {
+        alert(error.response.data.message || "Houve um erro ao cadastrar.");
+      }
     }
-    console.log(data);
   }
 
   return (
@@ -37,7 +78,7 @@ export default function CategoryForm(props) {
         <input
           name="name"
           type="text"
-          className="border outline-none px-3 py-1 rounded-lg w-full"
+          className="w-full px-3 py-1 border rounded-lg outline-none"
           placeholder="Nome"
           {...register("name")}
         />
@@ -45,7 +86,7 @@ export default function CategoryForm(props) {
       </div>
       <button
         type="submit"
-        className="mt-7 rounded-lg bg-primary w-full py-2 text-white"
+        className="w-full py-2 text-white rounded-lg mt-7 bg-primary"
       >
         {props.categoryId ? "Editar" : "Cadastrar"}
       </button>
