@@ -1,64 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import httpClient from "../../../services/axios";
+import { format } from "date-fns";
 
 export default function Categories() {
-  const categories = [
-    {
-      id: 1,
-      name: "Celulares",
-      qtyProducts: 10,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 2,
-      name: "TVs",
-      qtyProducts: 8,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 3,
-      name: "Smartwatches",
-      qtyProducts: 11,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 4,
-      name: "Notebooks",
-      qtyProducts: 16,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 5,
-      name: "Tablets",
-      qtyProducts: 7,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 6,
-      name: "PCs",
-      qtyProducts: 12,
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-  ];
+  const [categories, setCategories] = useState();
 
-  const [page, setPage] = useState(1);
-
-  const perPage = 2;
-  const totalPages = Math.ceil(categories.length / perPage);
-
-  function handleShowMore() {
-    setPage(page + 1);
-  }
+  useEffect(() => {
+    const getCategories = async () => {
+      const { data } = await httpClient.get("/categories");
+      setCategories(data);
+    };
+    getCategories();
+  }, []);
 
   return (
     <div className="custom-container">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Categorias</h1>
         <Link to="/dashboard/categories/create" className="btn text-primary">
           Nova Categoria
@@ -77,13 +35,16 @@ export default function Categories() {
             </tr>
           </thead>
           <tbody>
-            {categories.slice(0, perPage * page).map((category) => (
+            {categories?.map((category) => (
               <tr key={category.id}>
                 <td>{category.id}</td>
                 <td>{category.name}</td>
-                <td>{category.qtyProducts}</td>
-                <td>{category.created_at}</td>
-                <td>{category.updated_at}</td>
+                <td>{category.productsCount}</td>
+                <td>{format(category.createdAt, "dd/MM/yyyy")}</td>
+                <td>
+                  {category.updatedAt &&
+                    format(category.updatedAt, "dd/MM/yyyy")}
+                </td>
                 <td>
                   <Link
                     to={`/dashboard/categories/edit/${category.id}`}
@@ -96,17 +57,6 @@ export default function Categories() {
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-center">
-        {page < totalPages && (
-          <button
-            onClick={handleShowMore}
-            type="button"
-            className="mt-4 text-primary"
-          >
-            Mostrar mais
-          </button>
-        )}
       </div>
     </div>
   );
