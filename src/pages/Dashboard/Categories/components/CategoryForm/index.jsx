@@ -43,7 +43,7 @@ export default function CategoryForm(props) {
       }
     };
     getCategory();
-  }, [props]);
+  }, [navigate, props, reset]);
 
   async function onSubmit(data) {
     const token = localStorage.getItem("token");

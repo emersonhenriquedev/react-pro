@@ -33,6 +33,7 @@ export default function UserForm(props) {
   }, []);
 
   useEffect(() => {
+    if (!props.userId) return;
     const getUser = async () => {
       const token = localStorage.getItem("token");
       const headers = {
@@ -44,11 +45,11 @@ export default function UserForm(props) {
         name: user.name,
         email: user.email,
         role: user.role.id,
-        password: '****',
+        password: "****",
       });
     };
     getUser();
-  }, [props]);
+  }, [props, reset]);
 
   async function onSubmit(data) {
     const token = localStorage.getItem("token");
@@ -57,7 +58,6 @@ export default function UserForm(props) {
     };
 
     if (props.userId) {
-      
       try {
         const body = {
           name: data.name,
