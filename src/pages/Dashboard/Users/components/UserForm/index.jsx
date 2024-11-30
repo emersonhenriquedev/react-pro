@@ -22,11 +22,7 @@ export default function UserForm(props) {
 
   useEffect(() => {
     const getRoles = async () => {
-      const token = localStorage.getItem("token");
-      const headers = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      const response = await httpClient.get("/roles", headers);
+      const response = await httpClient.get("/roles");
       setRoles(response.data);
     };
     getRoles();
@@ -35,11 +31,7 @@ export default function UserForm(props) {
   useEffect(() => {
     if (!props.userId) return;
     const getUser = async () => {
-      const token = localStorage.getItem("token");
-      const headers = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      const response = await httpClient.get(`/users/${props.userId}`, headers);
+      const response = await httpClient.get(`/users/${props.userId}`);
       const user = response.data;
       reset({
         name: user.name,
@@ -52,11 +44,6 @@ export default function UserForm(props) {
   }, [props, reset]);
 
   async function onSubmit(data) {
-    const token = localStorage.getItem("token");
-    const headers = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-
     if (props.userId) {
       try {
         const body = {
@@ -64,7 +51,7 @@ export default function UserForm(props) {
           email: data.email,
           roleId: parseInt(data.role),
         };
-        await httpClient.put(`/users/${props.userId}`, body, headers);
+        await httpClient.put(`/users/${props.userId}`, body);
         alert("Editado com sucesso");
       } catch (error) {
         alert("Error ao cadastrar novo usuário");
@@ -78,7 +65,7 @@ export default function UserForm(props) {
       };
 
       try {
-        await httpClient.post("/users", body, headers);
+        await httpClient.post("/users", body);
         navigate("/dashboard");
       } catch (error) {
         alert("Error ao cadastrar novo usuário");
@@ -125,18 +112,6 @@ export default function UserForm(props) {
           <span className="text-red-400">{errors.password?.message}</span>
         </div>
       )}
-
-      {/* <div className="flex flex-col gap-y-1">
-        <label htmlFor="email">Confirme sua senha</label>
-        <input
-          name="passwordConfirm"
-          type="password"
-          className="w-full px-3 py-1 border rounded-lg outline-none"
-          placeholder="Senha"
-          {...register("passwordConfirm")}
-        />
-        <span className="text-red-400">{errors.passwordConfirm?.message}</span>
-      </div> */}
 
       <div className="flex flex-col gap-y-1">
         <label htmlFor="role">Cargo</label>

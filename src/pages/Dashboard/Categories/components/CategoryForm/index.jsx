@@ -46,15 +46,10 @@ export default function CategoryForm(props) {
   }, [navigate, props, reset]);
 
   async function onSubmit(data) {
-    const token = localStorage.getItem("token");
-    const headers = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+
     if (props.categoryId) {
       try {
-        await httpClient.put(`/categories/${props.categoryId}`, data, headers);
+        await httpClient.put(`/categories/${props.categoryId}`, data);
         alert("Editado com sucesso");
       } catch (error) {
         console.log(error);
@@ -63,7 +58,7 @@ export default function CategoryForm(props) {
       }
     } else {
       try {
-        await httpClient.post("/categories", data, headers);
+        await httpClient.post("/categories", data);
         navigate("/dashboard/categories");
       } catch (error) {
         alert(error.response.data.message || "Houve um erro ao cadastrar.");
