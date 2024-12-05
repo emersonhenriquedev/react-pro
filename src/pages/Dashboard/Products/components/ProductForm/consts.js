@@ -7,7 +7,8 @@ const schema = yup.object({
     .min(3, "Mínimo 3 caracteres"),
   price: yup.string().required("Preço é obrigatório"),
   category: yup.string().required("Categoria é obrigatória"),
-  stock: yup.string(),
+  stock: yup.string().required("Estoque é obrigatório"),
+  description: yup.string().required("Descrição é obrigatória")
 });
 
 export { schema };
