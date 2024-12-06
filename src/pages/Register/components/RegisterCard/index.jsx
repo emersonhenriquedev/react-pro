@@ -2,31 +2,54 @@ import { useForm } from "react-hook-form";
 import { schema } from "./consts";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import httpClient from "../../../../services/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterCard() {
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(data) {
-    console.log(data);
-    //TODO: fazer integração
+  async function onSubmit(data) {
+    try {
+      const body = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+
+      await httpClient.post("/auth/register", body);
+      const response = await httpClient.post("/auth/login", body);
+      localStorage.setItem("token", response.data.token);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      if (error.response.data.statusCode === 409) {
+        alert("E-mail já cadastrado");
+      } else {
+        alert("Ocorreu um erro");
+      }
+    }
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg w-96">
+    <div className="p-8 bg-white rounded-lg w-96">
       <h1 className="text-3xl text-center">Registre-se</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-y-1">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col mt-4 gap-y-1"
+      >
         <div className="flex flex-col gap-y-1">
           <label htmlFor="email">Nome</label>
           <input
             name="name"
             type="text"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Nome"
             {...register("name")}
           />
@@ -37,7 +60,7 @@ export default function RegisterCard() {
           <input
             name="email"
             type="email"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Email"
             {...register("email")}
           />
@@ -48,7 +71,7 @@ export default function RegisterCard() {
           <input
             name="password"
             type="password"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Senha"
             {...register("password")}
           />
@@ -59,7 +82,7 @@ export default function RegisterCard() {
           <input
             name="password"
             type="password"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Confirmação"
             {...register("confirmPassword")}
           />
@@ -69,12 +92,12 @@ export default function RegisterCard() {
         </div>
         <button
           type="submit"
-          className="mt-2 rounded-lg bg-primary w-full py-2 text-white"
+          className="w-full py-2 mt-2 text-white rounded-lg bg-primary"
         >
           Cadastrar
         </button>
-        <Link to="/login" className="text-center mt-2 text-blue-400">
-            Já tenho conta 
+        <Link to="/login" className="mt-2 text-center text-blue-400">
+          Já tenho conta
         </Link>
       </form>
     </div>
