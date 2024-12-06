@@ -1,82 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import httpClient from "../../../services/axios";
+import { format } from "date-fns";
+import formatToCurrency from "../../../utils/formatToCurrency";
 
 export default function Products() {
-  const products = [
-    {
-      id: 1,
-      name: "Celular",
-      category: "Celulares",
-      price: 10,
-      stock: 2,
-      image: "https://t62533.vteximg.com.br/arquivos/ids/930713-1000-1000/celular-samsung-a53-5g-128gb-dual-chip-2.jpg?v=638266913500030000",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 2,
-      name: "TV",
-      category: "TVs",
-      price: 8,
-      stock: 2,
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCu6sgUeTmYLu3WRulbqAr6u4Tqz3UObpe8A&s",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 3,
-      name: "Smartwatch",
-      category: "Smartwatches",
-      price: 11,
-      stock: 2,
-      image: "https://d1r6yjixh9u0er.cloudfront.net/Custom/Content/Products/47/92/4792_smartwatch-xiaomi-redmi-watch-3-x00755_m6_638277063990005751.webp",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 4,
-      name: "Notebook",
-      category: "Notebooks",
-      price: 16,
-      stock: 2,
-      image: "https://www.notebookcheck.info/uploads/tx_nbc2/pro13_02.jpg",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 5,
-      name: "Tablet",
-      category: "Tablets",
-      price: 7,
-      stock: 2,
-      image: "https://m.media-amazon.com/images/I/71-hJGtkLWL.jpg",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-    {
-      id: 6,
-      name: "PC",
-      category: "PCs",
-      price: 12,
-      stock: 2,
-      image: "https://www.punchtechnology.co.uk/wp-content/uploads/2024/02/vida2-1.jpg",
-      created_at: "2024-11-19",
-      updated_at: "2024-11-19",
-    },
-  ];
-
+  const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPage] = useState(1);
 
-  const perPage = 2;
-  const totalPages = Math.ceil(products.length / perPage);
+  const perPage = 10;
 
-  function handleShowMore() {
-    setPage(page + 1);
+  function changePage(pageNumber) {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setPage(pageNumber);
+    }
   }
 
+  async function getProducts() {
+    const response = await httpClient.get(
+      `/products?page=${page}&perPage=${perPage}`
+    );
+    setProducts(response.data.products);
+    setTotalPage(response.data.numberOfPages);
+    console.log(response.data.products);
+  }
+
+  useEffect(() => {
+    getProducts();
+  }, [page]);
+
   return (
-    <div className="custom-container">
-      <div className="flex justify-between items-center">
+    <div className="custom-container pb-60">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Produtos</h1>
         <Link to="/dashboard/products/create" className="btn text-primary">
           Novo Produto
@@ -98,18 +54,22 @@ export default function Products() {
             </tr>
           </thead>
           <tbody>
-            {products.slice(0, perPage * page).map((product) => (
+            {products.map((product) => (
               <tr key={product.id}>
                 <td>{product.id}</td>
                 <td>
-                    <img src={product.image} alt={product.name} className="w-20 h-20   " />
+                  <img
+                    src={product.imgSrc ? `http://localhost:3000/${product.imgSrc}` : '/default-image.webp'}
+                    alt={product.imgSrc}
+                    className="w-20 h-20"
+                  />
                 </td>
                 <td>{product.name}</td>
-                <td>{product.price}</td>
+                <td>{ formatToCurrency(product.price)}</td>
                 <td>{product.stock}</td>
-                <td>{product.category}</td>
-                <td>{product.created_at}</td>
-                <td>{product.updated_at}</td>
+                <td>{product.category.name}</td>
+                <td>{format(product.createdAt,'yyyy/MM/dd')}</td>
+                <td>{product.updatedAt && format(product.updatedAt,'dd/MM/yyyy')}</td>
                 <td>
                   <Link
                     to={`/dashboard/products/edit/${product.id}`}
@@ -123,16 +83,24 @@ export default function Products() {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-center">
-        {page < totalPages && (
+      <div className="flex justify-center mt-6">
+        <div className="join">
           <button
-            onClick={handleShowMore}
-            type="button"
-            className="mt-4 text-primary"
+            disabled={page === 1}
+            onClick={() => changePage(page - 1)}
+            className="join-item btn"
           >
-            Mostrar mais
+            «
           </button>
-        )}
+          <button className="join-item btn">Página {page}</button>
+          <button
+            disabled={page === totalPages}
+            onClick={() => changePage(page + 1)}
+            className="join-item btn"
+          >
+            »
+          </button>
+        </div>
       </div>
     </div>
   );
