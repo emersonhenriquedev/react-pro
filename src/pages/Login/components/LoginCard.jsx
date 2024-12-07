@@ -2,8 +2,13 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { schema } from "./consts";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { authContext } from "../../../contexts/authContext";
 
 export default function LoginCard() {
+  const { login } = useContext(authContext);
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
@@ -12,24 +17,29 @@ export default function LoginCard() {
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(data) {
-    console.log(data);
-    //TODO: fazer integração
+  async function onSubmit(data) {
+    try {
+      await login(data);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      alert("Ocorreu um erro");
+    }
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg w-96">
+    <div className="p-8 bg-white rounded-lg w-96">
       <h1 className="text-3xl text-center">Entrar</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mt-4 flex flex-col gap-y-1"
+        className="flex flex-col mt-4 gap-y-1"
       >
         <div className="flex flex-col gap-y-1">
           <label htmlFor="email">Email</label>
           <input
             name="email"
             type="email"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Email"
             {...register("email")}
           />
@@ -40,7 +50,7 @@ export default function LoginCard() {
           <input
             name="password"
             type="password"
-            className="border outline-none px-3 py-1 rounded-lg w-full"
+            className="w-full px-3 py-1 border rounded-lg outline-none"
             placeholder="Senha"
             {...register("password")}
           />
@@ -48,11 +58,11 @@ export default function LoginCard() {
         </div>
         <button
           type="submit"
-          className="mt-2 rounded-lg bg-primary w-full py-2 text-white"
+          className="w-full py-2 mt-2 text-white rounded-lg bg-primary"
         >
           Entrar
         </button>
-        <Link to="/register" className="text-center mt-2 text-blue-400">
+        <Link to="/register" className="mt-2 text-center text-blue-400">
           Não tenho conta
         </Link>
       </form>

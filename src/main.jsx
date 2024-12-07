@@ -25,7 +25,9 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import PageLayout from "./components/PageLayout";
+
 import CartProvider from "./providers/CartProvider";
+import AuthProvider from "./providers/AuthProvider";
 
 const broswerRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -54,8 +56,10 @@ const broswerRouter = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CartProvider>
-      <RouterProvider router={broswerRouter} />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={broswerRouter} />
+      </CartProvider>
+    </AuthProvider>
   </StrictMode>
 );
