@@ -3,9 +3,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { schema } from "./consts";
 import { useNavigate } from "react-router-dom";
 import httpClient from "../../../../../services/axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { authContext } from "../../../../../contexts/authContext";
 
 export default function LoginCard() {
+  const { login } = useContext(authContext);
   const {
     register,
     handleSubmit,
@@ -25,17 +27,18 @@ export default function LoginCard() {
     };
 
     try {
-      const response = await httpClient.post("/auth/login", body);
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-
-      const userResponse = await httpClient.get("/users/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (userResponse.data.role.name === "ADMIN") {
-        navigate("/dashboard");
-      }
+      // const response = await httpClient.post("/auth/login", body);
+      // const token = response.data.token;
+      // localStorage.setItem("token", token);
+      // const userResponse = await httpClient.get("/users/me", {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
+      
+      // if (userResponse.data.role.name === "ADMIN") {
+      //   navigate("/dashboard");
+      // }
+      await login(body);
+      navigate("/dashboard");
     } catch (error) {
       if (error.status === 401) {
         setError("E-mail ou senha incorretos");

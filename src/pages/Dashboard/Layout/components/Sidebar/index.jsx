@@ -1,13 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaProductHunt } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
+import { useContext } from "react";
+import { authContext } from "../../../../../contexts/authContext";
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const { logout } = useContext(authContext);
 
   function logoutHandler() {
-    localStorage.removeItem('token');
-    navigate('/dashboard/login');
+    logout();
+    navigate("/dashboard/login");
   }
 
   return (
@@ -20,7 +23,7 @@ export default function Sidebar() {
         </li>
         <li>
           <Link to="/dashboard/products" className="flex items-center gap-x-2">
-           <FaProductHunt/> Produtos
+            <FaProductHunt /> Produtos
           </Link>
         </li>
         <li>
@@ -28,11 +31,15 @@ export default function Sidebar() {
             to="/dashboard/categories"
             className="flex items-center gap-x-2"
           >
-           <BiCategory /> Categorias
+            <BiCategory /> Categorias
           </Link>
         </li>
       </ul>
-      <button onClick={logoutHandler} type="button" className="text-lg text-red-200 w-fit">
+      <button
+        onClick={logoutHandler}
+        type="button"
+        className="text-lg text-red-200 w-fit"
+      >
         Sair
       </button>
     </aside>
