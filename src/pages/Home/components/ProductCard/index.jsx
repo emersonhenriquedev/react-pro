@@ -13,11 +13,11 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="border rounded-lg">
-      <div className="h-36">
+      <div className="h-48">
         <img
-          src={product.image}
-          alt={product.name}
-          className="object-contain w-full h-full"
+          src={`http://localhost:3000/${product.imgSrc}`}
+          alt={`http://localhost:3000/${product.imgSrc}`}
+          className="object-cover w-full h-full rounded-t-lg"
         />
       </div>
       <div className="px-4 pt-4 pb-4">
@@ -43,6 +43,6 @@ ProductCard.propTypes = {
     name: PropTypes.string.isRequired,
     stock: PropTypes.number.isRequired,
     price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
+    imgSrc: PropTypes.string.isRequired,
   }),
 };

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import httpClient from "../../../services/axios";
 import { format } from "date-fns";
 import formatToCurrency from "../../../utils/formatToCurrency";
+import Pagination from "../../../components/Pagination";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -59,17 +60,23 @@ export default function Products() {
                 <td>{product.id}</td>
                 <td>
                   <img
-                    src={product.imgSrc ? `http://localhost:3000/${product.imgSrc}` : '/default-image.webp'}
+                    src={
+                      product.imgSrc
+                        ? `http://localhost:3000/${product.imgSrc}`
+                        : "/default-image.webp"
+                    }
                     alt={product.imgSrc}
                     className="w-20 h-20"
                   />
                 </td>
                 <td>{product.name}</td>
-                <td>{ formatToCurrency(product.price)}</td>
+                <td>{formatToCurrency(product.price)}</td>
                 <td>{product.stock}</td>
                 <td>{product.category.name}</td>
-                <td>{format(product.createdAt,'yyyy/MM/dd')}</td>
-                <td>{product.updatedAt && format(product.updatedAt,'dd/MM/yyyy')}</td>
+                <td>{format(product.createdAt, "yyyy/MM/dd")}</td>
+                <td>
+                  {product.updatedAt && format(product.updatedAt, "dd/MM/yyyy")}
+                </td>
                 <td>
                   <Link
                     to={`/dashboard/products/edit/${product.id}`}
@@ -84,23 +91,13 @@ export default function Products() {
         </table>
       </div>
       <div className="flex justify-center mt-6">
-        <div className="join">
-          <button
-            disabled={page === 1}
-            onClick={() => changePage(page - 1)}
-            className="join-item btn"
-          >
-            «
-          </button>
-          <button className="join-item btn">Página {page}</button>
-          <button
-            disabled={page === totalPages}
-            onClick={() => changePage(page + 1)}
-            className="join-item btn"
-          >
-            »
-          </button>
-        </div>
+        <Pagination
+          onClickNext={() => changePage(page + 1)}
+          onClickPrevious={() => changePage(page - 1)}
+          page={page}
+          isPreviousDisabled={page === 1}
+          isNextDisabled={page + 1 > totalPages}
+        />
       </div>
     </div>
   );

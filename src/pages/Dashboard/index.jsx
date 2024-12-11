@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import httpClient from "../../services/axios";
+import Pagination from "../../components/Pagination";
 
 export default function Dashboard() {
   const [page, setPage] = useState(1);
@@ -73,21 +74,13 @@ export default function Dashboard() {
         </table>
       </div>
       <div className="flex justify-center mt-6">
-        <div className="join">
-          <button
-            onClick={() => changePage(page - 1)}
-            className="join-item btn"
-          >
-            «
-          </button>
-          <button className="join-item btn">Página {page}</button>
-          <button
-            onClick={() => changePage(page + 1)}
-            className="join-item btn"
-          >
-            »
-          </button>
-        </div>
+      <Pagination
+          onClickNext={() => changePage(page + 1)}
+          onClickPrevious={() => changePage(page - 1)}
+          page={page}
+          isPreviousDisabled={page === 1}
+          isNextDisabled={page + 1 > totalPages}
+        />
       </div>
     </div>
   );
