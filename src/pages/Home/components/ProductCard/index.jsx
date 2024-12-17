@@ -3,6 +3,7 @@ import { IoCartOutline } from "react-icons/io5";
 import PropTypes from "prop-types";
 import formatToCurrency from "../../../../utils/formatToCurrency";
 import { cartContext } from "../../../../contexts/cartContext";
+import { BASE_URL } from "../../../../consts";
 
 export default function ProductCard({ product }) {
   const { addItem } = useContext(cartContext);
@@ -15,8 +16,8 @@ export default function ProductCard({ product }) {
     <div className="border rounded-lg">
       <div className="h-48">
         <img
-          src={`http://localhost:3000/${product.imgSrc}`}
-          alt={`http://localhost:3000/${product.imgSrc}`}
+          src={`${BASE_URL}${product.imgSrc}`}
+          alt={`${BASE_URL}${product.imgSrc}`}
           className="object-cover w-full h-full rounded-t-lg"
         />
       </div>

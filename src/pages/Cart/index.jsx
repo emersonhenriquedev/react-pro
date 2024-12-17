@@ -4,7 +4,7 @@ import { FiMinus } from "react-icons/fi";
 import { useContext } from "react";
 import formatToCurrency from "../../utils/formatToCurrency";
 import { cartContext } from "../../contexts/cartContext";
-
+import { BASE_URL } from '../../consts';
 export default function Cart() {
   const { items, removeItem, incrementItem, decrementItem, total } =
     useContext(cartContext);
@@ -31,7 +31,7 @@ export default function Cart() {
               <tr key={item.id}>
                 <td>
                   <img
-                    src={item.image}
+                    src={item.imgSrc ? `${BASE_URL}${item.imgSrc}`: '/default-image.webp'}
                     alt={item.name}
                     className="object-contain w-20 h-20 "
                   />

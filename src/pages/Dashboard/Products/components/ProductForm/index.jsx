@@ -8,6 +8,7 @@ import httpClient from "../../../../../services/axios";
 import { currencyMask } from "./currencyMask";
 import currency from "currency.js";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../../../consts";
 
 export default function ProductForm(props) {
   const [file, setFile] = useState();
@@ -131,7 +132,7 @@ export default function ProductForm(props) {
                   className="object-cover w-full h-full"
                   src={
                     typeof file === 'string'
-                      ? `http://localhost:3000/${file}`
+                      ? `${BASE_URL}${file}`
                       : URL.createObjectURL(file)
                   }
                   alt={file}
