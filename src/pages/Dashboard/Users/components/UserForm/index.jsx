@@ -36,7 +36,7 @@ export default function UserForm(props) {
       reset({
         name: user.name,
         email: user.email,
-        role: user.role.id,
+        role: user.role.id.toString(),
         password: "****",
       });
     };
