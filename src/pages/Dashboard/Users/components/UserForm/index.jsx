@@ -13,7 +13,7 @@ export default function UserForm(props) {
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitting },
     handleSubmit,
     reset,
   } = useForm({
@@ -132,7 +132,8 @@ export default function UserForm(props) {
 
       <button
         type="submit"
-        className="w-full py-2 text-white rounded-lg mt-7 bg-primary"
+        disabled={!isDirty || isSubmitting}
+        className="w-full py-2 text-white rounded-lg mt-7 bg-primary disabled:bg-opacity-30 disabled:cursor-not-allowed"
       >
         {props.userId ? "Editar" : "Cadastrar"}
       </button>

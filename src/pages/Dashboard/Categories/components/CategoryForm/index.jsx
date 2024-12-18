@@ -16,7 +16,7 @@ const schema = yup.object({
 export default function CategoryForm(props) {
   const {
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
     handleSubmit,
     reset,
   } = useForm({
@@ -80,7 +80,7 @@ export default function CategoryForm(props) {
         <span className="text-red-400">{errors.name?.message}</span>
       </div>
       <button
-        disabled={!isDirty}
+        disabled={!isDirty || isSubmitting}
         type="submit"
         className="w-full py-2 text-white rounded-lg mt-7 bg-primary disabled:bg-opacity-30 disabled:cursor-not-allowed"
       >
