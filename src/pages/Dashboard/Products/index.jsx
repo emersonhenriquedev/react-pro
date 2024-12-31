@@ -4,32 +4,10 @@ import httpClient from "../../../services/axios";
 import { format } from "date-fns";
 import formatToCurrency from "../../../utils/formatToCurrency";
 import Pagination from "../../../components/Pagination";
+import useFetchProducts from "../../../hooks/useFetchProducts";
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPage] = useState(1);
-
-  const perPage = 10;
-
-  function changePage(pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setPage(pageNumber);
-    }
-  }
-
-  async function getProducts() {
-    const response = await httpClient.get(
-      `/products?page=${page}&perPage=${perPage}`
-    );
-    setProducts(response.data.products);
-    setTotalPage(response.data.numberOfPages);
-    console.log(response.data.products);
-  }
-
-  useEffect(() => {
-    getProducts();
-  }, [page]);
+  const { page, products, changePage, totalPages } = useFetchProducts({});
 
   return (
     <div className="custom-container pb-60">
