@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import httpClient from "../../../services/axios";
 import { format } from "date-fns";
+import { CategoriesService } from "../../../services/categories";
 
 export default function Categories() {
   const [categories, setCategories] = useState();
 
   useEffect(() => {
     const getCategories = async () => {
-      const { data } = await httpClient.get("/categories");
+      const { data } = await CategoriesService.findAll();
       setCategories(data);
     };
     getCategories();

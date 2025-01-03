@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import httpClient from "../../../../../services/axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { CategoriesService } from "../../../../../services/categories";
 
 const schema = yup.object({
   name: yup
@@ -29,9 +29,7 @@ export default function CategoryForm(props) {
     const getCategory = async () => {
       if (!props.categoryId) return;
       try {
-        const response = await httpClient.get(
-          `/categories/${props.categoryId}`
-        );
+        const response = await CategoriesService.findById(props.categoryId);
         const category = response.data;
 
         reset({
@@ -46,10 +44,9 @@ export default function CategoryForm(props) {
   }, [navigate, props, reset]);
 
   async function onSubmit(data) {
-
     if (props.categoryId) {
       try {
-        await httpClient.put(`/categories/${props.categoryId}`, data);
+        await CategoriesService.update(props.categoryId, data);
         alert("Editado com sucesso");
       } catch (error) {
         console.log(error);
@@ -58,7 +55,7 @@ export default function CategoryForm(props) {
       }
     } else {
       try {
-        await httpClient.post("/categories", data);
+        await CategoriesService.create(data);
         navigate("/dashboard/categories");
       } catch (error) {
         alert(error.response.data.message || "Houve um erro ao cadastrar.");

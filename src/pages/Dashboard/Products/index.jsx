@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import httpClient from "../../../services/axios";
 import { format } from "date-fns";
 import formatToCurrency from "../../../utils/formatToCurrency";
 import Pagination from "../../../components/Pagination";

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import httpClient from "../services/axios";
+import { ProductsService } from "../services/products";
 
 export default function useFetchProducts({ perPage = 30 }) {
     const [products, setProducts] = useState([]);
@@ -12,12 +13,9 @@ export default function useFetchProducts({ perPage = 30 }) {
         }
     }
 
-    async function fetchProducts() {
+    async function fetchProducts(pageNumber) {
         try {
-            const params = { page, perPage };
-            const { data } = await httpClient.get("/products", {
-                params,
-            });
+            const { data } = await ProductsService.findAll(pageNumber, perPage);
             setProducts(data.products);
             setTotalPage(data.numberOfPages);
         } catch (error) {
@@ -35,8 +33,8 @@ export default function useFetchProducts({ perPage = 30 }) {
     }
 
     useEffect(() => {
-        getProducts();
-        // fetchProducts();
+        // getProducts();
+        fetchProducts(page);
     }, [page]);
 
     return {

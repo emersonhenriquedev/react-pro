@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
-import httpClient from "../../services/axios";
 import Pagination from "../../components/Pagination";
 import useFetchProducts from "../../hooks/useFetchProducts";
+import { ProductsService } from "../../services/products";
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
@@ -15,7 +15,7 @@ export default function Home() {
   async function onSearchHandler(value) {
     if (value) {
       setSearchValue(value);
-      const { data } = await httpClient.get(`/products/search/${value}`);
+      const { data } = await ProductsService.search(value);
       setSearchedProducts(data);
     }
   }
