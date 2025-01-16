@@ -1,30 +1,19 @@
-import { useState, useEffect } from "react";
-
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
 import Pagination from "../../components/Pagination";
-import useFetchProducts from "../../hooks/useFetchProducts";
-import { ProductsService } from "../../services/products";
+import useHomeViewModel from "./useHomeViewModel";
 
 export default function Home() {
-  const [searchValue, setSearchValue] = useState("");
-  const [searchedProducts, setSearchedProducts] = useState([]);
-
-  const { page, products, changePage, totalPages } = useFetchProducts({});
-
-  async function onSearchHandler(value) {
-    if (value) {
-      setSearchValue(value);
-      const { data } = await ProductsService.search(value);
-      setSearchedProducts(data);
-    }
-  }
-
-  function onChangeSearchHandler(value) {
-    if (!value) {
-      setSearchValue("");
-    }
-  }
+  const {
+    searchValue,
+    searchedProducts,
+    products,
+    page,
+    totalPages,
+    onSearchHandler,
+    onChangeSearchHandler,
+    changePage,
+  } = useHomeViewModel();
 
   return (
     <div className="min-h-screen ">
