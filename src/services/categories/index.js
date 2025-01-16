@@ -1,5 +1,5 @@
 import httpClient from "../axios";
-const MODULE '/categories';
+const MODULE = '/categories';
 
 export class CategoriesService {
 
