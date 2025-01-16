@@ -1,16 +1,11 @@
-import { useContext } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import PropTypes from "prop-types";
 import formatToCurrency from "../../../../utils/formatToCurrency";
-import { cartContext } from "../../../../contexts/cartContext";
 import { BASE_URL } from "../../../../consts";
+import useProductCardViewModel from "./useProductCardViewModel";
 
 export default function ProductCard({ product }) {
-  const { addItem } = useContext(cartContext);
-
-  function addToCart() {
-    addItem(product);
-  }
+  const { addToCart } = useProductCardViewModel(product);
 
   return (
     <div className="border rounded-lg">
