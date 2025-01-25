@@ -1,19 +1,9 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { CategoriesService } from "../../../services/categories";
+import useCategoriesViewModel from "./useCategoriesViewModel";
 
 export default function Categories() {
-  const [categories, setCategories] = useState();
-
-  useEffect(() => {
-    const getCategories = async () => {
-      const { data } = await CategoriesService.findAll();
-      setCategories(data);
-    };
-    getCategories();
-  }, []);
-
+  const {categories} = useCategoriesViewModel();
   return (
     <div className="custom-container">
       <div className="flex items-center justify-between">
