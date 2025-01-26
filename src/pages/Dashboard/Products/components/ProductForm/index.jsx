@@ -1,122 +1,20 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
-import { schema } from "./consts";
 import DropFileZone from "./components/DropFileZone";
-import { useEffect, useState } from "react";
-import httpClient from "../../../../../services/axios";
-import { currencyMask } from "./currencyMask";
-import currency from "currency.js";
-import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../../../../consts";
+import useProductFormViewModel from "./useProductFormViewModel";
 
 export default function ProductForm(props) {
-  const [file, setFile] = useState();
-  const [categories, setCategories] = useState([]);
-  const navigate = useNavigate();
   const {
-    register,
-    formState: { errors },
+    onSubmitHandler,
     handleSubmit,
-    setValue,
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  async function uploadImage(id) {
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        await httpClient.post(`/products/${id}/uploadImage`, formData);
-      } catch (error) {
-        alert("Ocorreu um erro");
-      }
-    }
-  }
-
-  async function onSubmitHandler(data) {
-    // TODO: intregar com a api
-    const body = {
-      name: data.name,
-      price: currency(data.price).value,
-      stock: data.stock,
-      description: data.description,
-      categoryId: data.category,
-    };
-
-    if (props.productId) {
-      try {
-        await httpClient.put(`/products/${props.productId}`, body);
-        if(typeof file !== 'string') {
-          await uploadImage(props.productId);
-        }
-        navigate("/dashboard/products");
-      } catch (error) {
-        alert("Ocorreu um erro ao editar o produto!");
-        console.error(error);
-      }
-    } else {
-      try {
-        const response = await httpClient.post("/products", body);
-        await uploadImage(response.data.id);
-        alert(`Produto ${response.data.name} criado com sucesso!`);
-        navigate("/dashboard/products");
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    console.log(data);
-  }
-
-  function onDropHandler(files) {
-    setFile(files[0]);
-    // TODO: fazer envio do arquivo
-  }
-
-  function onPriceChangeHandler(event) {
-    const { value } = event.target;
-    setValue("price", currencyMask(value));
-  }
-
-  function onStockChangleHandler(event) {
-    const { value } = event.target;
-    setValue("stock", value.replace(/\D/g, ""));
-  }
-
-  useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const response = await httpClient.get("/categories");
-        setCategories(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getCategories();
-  }, []);
-
-  useEffect(() => {
-    if (!props.productId) return;
-    const getProduct = async () => {
-      try {
-        const response = await httpClient.get(`/products/${props.productId}`);
-        setFile(response.data.imgSrc);
-
-        reset({
-          name: response.data.name,
-          category: response.data.category.id,
-          price: response.data.price.toFixed(2),
-          description: response.data.description,
-          stock: response.data.stock,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getProduct();
-  }, [props.productId]);
+    file,
+    onDropHandler,
+    register,
+    errors,
+    onPriceChangeHandler,
+    categories,
+    onStockChangleHandler,
+  } = useProductFormViewModel(props.productId);
 
   return (
     <form
@@ -131,7 +29,7 @@ export default function ProductForm(props) {
                 <img
                   className="object-cover w-full h-full"
                   src={
-                    typeof file === 'string'
+                    typeof file === "string"
                       ? `${BASE_URL}${file}`
                       : URL.createObjectURL(file)
                   }
