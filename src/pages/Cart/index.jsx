@@ -1,27 +1,24 @@
 import { FaTrash } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { FiMinus } from "react-icons/fi";
-import { useContext, useState } from "react";
 import formatToCurrency from "../../utils/formatToCurrency";
-import { cartContext } from "../../contexts/cartContext";
 import { BASE_URL } from "../../consts";
 import Modal from "../../components/Modal";
+import useCartViewModel from "./useCartViewModel";
 
 export default function Cart() {
-  const { items, removeItem, incrementItem, decrementItem, total } =
-    useContext(cartContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productId, setProductId] = useState(0);
+  const {
+    total,
+    items,
+    decrementItem,
+    incrementItem,
+    setIsModalOpen,
+    setProductId,
+    isModalOpen,
+    onConfirmModal,
 
-  function onConfirmModal() {
-    if(productId) {
-      removeItem(productId);
-      
-      setIsModalOpen(false);
-      setProductId(null);
-    }
-  }
-
+  } = useCartViewModel();
+  
   return (
     <main className="min-h-screen pt-10">
       <span className="block mb-6 text-2xl font-medium text-right">
