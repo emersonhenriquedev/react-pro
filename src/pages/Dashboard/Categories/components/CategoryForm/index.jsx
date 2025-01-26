@@ -1,67 +1,13 @@
-import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { CategoriesService } from "../../../../../services/categories";
-
-const schema = yup.object({
-  name: yup
-    .string()
-    .required("Campo obrigatório")
-    .min(3, "Mínimo 3 caracteres"),
-});
-
+import useCategoryFormViewModel from "./useCategoryFormViewModel";
 export default function CategoryForm(props) {
-  const {
-    register,
-    formState: { errors, isDirty, isSubmitting },
+  const { 
     handleSubmit,
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const getCategory = async () => {
-      if (!props.categoryId) return;
-      try {
-        const response = await CategoriesService.findById(props.categoryId);
-        const category = response.data;
-
-        reset({
-          name: category.name,
-        });
-      } catch (error) {
-        alert("Categoria não existe.");
-        navigate("/dashboard/categories");
-      }
-    };
-    getCategory();
-  }, [navigate, props, reset]);
-
-  async function onSubmit(data) {
-    if (props.categoryId) {
-      try {
-        await CategoriesService.update(props.categoryId, data);
-        alert("Editado com sucesso");
-      } catch (error) {
-        console.log(error);
-        alert(error.response.data.message || "Houve um erro ao editar.");
-        navigate("/dashboard/categories");
-      }
-    } else {
-      try {
-        await CategoriesService.create(data);
-        navigate("/dashboard/categories");
-      } catch (error) {
-        alert(error.response.data.message || "Houve um erro ao cadastrar.");
-      }
-    }
-  }
+    isDirty,
+    onSubmit,
+    isSubmitting,
+    errors,
+    register } = useCategoryFormViewModel(props.categoryId);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
