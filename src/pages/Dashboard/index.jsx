@@ -1,34 +1,9 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import httpClient from "../../services/axios";
 import Pagination from "../../components/Pagination";
+import useDashboardViewModel from "./useDashboardViewModel";
 
 export default function Dashboard() {
-  const [page, setPage] = useState(1);
-  const [users, setUsers] = useState([]);
-  const [totalPages, setTotalPage] = useState(1);
-  const perPage = 2;
-
-  function changePage(pageNumber) {
-    if (pageNumber > 0 && pageNumber <= totalPages) {
-      setPage(pageNumber);
-    }
-  }
-
-  async function getUsers() {
-    const token = localStorage.getItem("token");
-    const headers = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await httpClient.get(
-      `/users?page=${page}&perPage=${perPage}`,
-      headers
-    );
-    setUsers(response.data.users);
-    setTotalPage(response.data.numberOfPages);
-  }
-
-  useEffect(() => {
-    getUsers();
-  }, [page]);
+  const { users, changePage, page, totalPages } = useDashboardViewModel();
 
   return (
     <div className="custom-container">
@@ -74,7 +49,7 @@ export default function Dashboard() {
         </table>
       </div>
       <div className="flex justify-center mt-6">
-      <Pagination
+        <Pagination
           onClickNext={() => changePage(page + 1)}
           onClickPrevious={() => changePage(page - 1)}
           page={page}
