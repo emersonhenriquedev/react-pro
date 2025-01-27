@@ -6,6 +6,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import "./index.css";
 
@@ -54,12 +55,16 @@ const broswerRouter = createBrowserRouter(
   )
 );
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <CartProvider>
-        <RouterProvider router={broswerRouter} />
-      </CartProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CartProvider>
+          <RouterProvider router={broswerRouter} />
+        </CartProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   </StrictMode>
 );
