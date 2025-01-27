@@ -1,16 +1,9 @@
-import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { CategoriesService } from "../../../../../services/categories";
-
-const schema = yup.object({
-  name: yup
-    .string()
-    .required("Campo obrigatório")
-    .min(3, "Mínimo 3 caracteres"),
-});
+import { schema } from "./consts";
 
 export default function useCategoryFormViewModel(categoryId) {
   const {

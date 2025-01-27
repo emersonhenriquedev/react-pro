@@ -1,27 +1,9 @@
 import { IoSearchOutline } from "react-icons/io5";
-import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-
-const schema = yup.object({
-  search: yup.string().required(),
-});
-
+import useSearchBarViewModel from "./useSearchBarViewModel";
 export default function SearchBar({ onSearch, onChange }) {
-  const { register, handleSubmit, setValue } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  function onSubmit({ search }) {
-    onSearch(search);
-  }
-
-  function onChangeHandler(event) {
-    const searchValue = event.target.value;
-    setValue("search", searchValue);
-    onChange(searchValue);
-  }
+  const { handleSubmit, register, onSubmit, onChangeHandler } =
+    useSearchBarViewModel(onSearch, onChange);
 
   return (
     <form
