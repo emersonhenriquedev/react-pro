@@ -1,18 +1,33 @@
-import { useEffect, useState } from "react";
 import { CategoriesService } from "../../../services/categories";
+import { useQuery } from "@tanstack/react-query";
 
 export default function useCategoriesViewModel() {
-  const [categories, setCategories] = useState();
+  const { data, isLoading, error } = useQuery({
+    queryKey: "categories",
+    queryFn: CategoriesService.findAll,
+    refetchOnMount: false,
+  });
 
-  useEffect(() => {
-    const getCategories = async () => {
-      const { data } = await CategoriesService.findAll();
-      setCategories(data);
-    };
-    getCategories();
-  }, []);
+  // const [categories, setCategories] = useState();
+  // const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const getCategories = async () => {
+  //     const { data } = await CategoriesService.findAll();
+  //     setCategories(data);
+  //     setIsLoading(false);
+  //   };
+  //   getCategories();
+  // }, []);
+
+  // return {
+  //   categories,
+  //   isLoading
+  // };
 
   return {
-    categories,
+    categories: data?.data || [],
+    isLoading,
+    error,
   };
 }
