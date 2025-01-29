@@ -2,7 +2,7 @@ import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
 import Pagination from "../../components/Pagination";
 import useHomeViewModel from "./useHomeViewModel";
-
+import Spinner from "../../components/Spinner";
 export default function Home() {
   const {
     searchValue,
@@ -10,6 +10,7 @@ export default function Home() {
     products,
     page,
     totalPages,
+    isLoading,
     onSearchHandler,
     onChangeSearchHandler,
     changePage,
@@ -24,19 +25,27 @@ export default function Home() {
         />
         <div className="mt-10">
           <h1 className="text-4xl font-medium">Produtos</h1>
-          <ul className="grid grid-cols-4 gap-6 mt-6">
-            {searchValue
-              ? searchedProducts.map((product) => (
-                  <li key={product.id}>
-                    <ProductCard product={product} />
-                  </li>
-                ))
-              : products.map((product) => (
-                  <li key={product.id}>
-                    <ProductCard product={product} />
-                  </li>
-                ))}
-          </ul>
+          {isLoading ? (
+            <div className="flex justify-center pt-10">
+              <Spinner />
+            </div>
+          ) : (
+            <>
+              <ul className="grid grid-cols-4 gap-6 mt-6">
+                {searchValue
+                  ? searchedProducts.map((product) => (
+                      <li key={product.id}>
+                        <ProductCard product={product} />
+                      </li>
+                    ))
+                  : products.map((product) => (
+                      <li key={product.id}>
+                        <ProductCard product={product} />
+                      </li>
+                    ))}
+              </ul>
+            </>
+          )}
 
           {searchValue ? null : (
             <div className="flex justify-center mt-3">

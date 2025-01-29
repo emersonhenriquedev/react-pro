@@ -6,7 +6,7 @@ export default function useHomeViewModel() {
   const [searchValue, setSearchValue] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
 
-  const { page, products, changePage, totalPages } = useFetchProducts({});
+  const { page, products, changePage, totalPages, isLoading } = useFetchProducts({});
 
   async function onSearchHandler(value) {
     if (value) {
@@ -28,6 +28,7 @@ export default function useHomeViewModel() {
     products,
     page,
     totalPages,
+    isLoading,
     onSearchHandler,
     onChangeSearchHandler,
     changePage,
