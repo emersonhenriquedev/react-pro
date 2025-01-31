@@ -2,18 +2,23 @@ import PropTypes from "prop-types";
 import DropFileZone from "./components/DropFileZone";
 import { BASE_URL } from "../../../../../consts";
 import useProductFormViewModel from "./useProductFormViewModel";
+import { Controller } from "react-hook-form";
 
 export default function ProductForm(props) {
   const {
     onSubmitHandler,
     handleSubmit,
     file,
-    onDropHandler,
     register,
     errors,
     onPriceChangeHandler,
     categories,
     onStockChangleHandler,
+    isDirty,
+    isSubmitting,
+    isValid,
+    control,
+    reset,
   } = useProductFormViewModel(props.productId);
 
   return (
@@ -39,8 +44,14 @@ export default function ProductForm(props) {
             </div>
           </div>
         ) : null}
+        <Controller
+          name="file"
+          control={control}
+          render={({ field }) => (
+            <DropFileZone onDrop={(files) => field.onChange(files[0])} />
+          )}
+        />
 
-        <DropFileZone onDrop={onDropHandler} />
         {file?.name}
       </div>
       <div className="flex flex-col gap-y-1">
@@ -109,10 +120,12 @@ export default function ProductForm(props) {
 
       <button
         type="submit"
-        className="w-full py-2 text-white rounded-lg mt-7 bg-primary"
+        className="w-full py-2 text-white rounded-lg mt-7 bg-primary disabled:opacity-30 disabled:cursor-not-allowed"
+        disabled={!isDirty || isSubmitting || !isValid}
       >
         {props.productId ? "Editar" : "Cadastrar"}
       </button>
+      <button type="button" onClick={() => reset()} className="py-2 border rounded-lg">Resetar</button>
     </form>
   );
 }

@@ -8,20 +8,23 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 export default function useProductFormViewModel(productId) {
-  const [file, setFile] = useState();
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const {
     register,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitting, isValid },
     handleSubmit,
     setValue,
     reset,
+    watch,
+    control,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  async function uploadImage(id) {
+  const file = watch("file");
+
+  async function uploadImage(id, file) {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -45,8 +48,8 @@ export default function useProductFormViewModel(productId) {
     if (productId) {
       try {
         await httpClient.put(`/products/${productId}`, body);
-        if (typeof file !== "string") {
-          await uploadImage(productId);
+        if (typeof data.file !== "string") {
+          await uploadImage(productId, data.file);
         }
         navigate("/dashboard/products");
       } catch (error) {
@@ -56,7 +59,7 @@ export default function useProductFormViewModel(productId) {
     } else {
       try {
         const response = await httpClient.post("/products", body);
-        await uploadImage(response.data.id);
+        await uploadImage(response.data.id, data.file);
         alert(`Produto ${response.data.name} criado com sucesso!`);
         navigate("/dashboard/products");
       } catch (error) {
@@ -64,11 +67,6 @@ export default function useProductFormViewModel(productId) {
       }
     }
     console.log(data);
-  }
-
-  function onDropHandler(files) {
-    setFile(files[0]);
-    // TODO: fazer envio do arquivo
   }
 
   function onPriceChangeHandler(event) {
@@ -98,14 +96,13 @@ export default function useProductFormViewModel(productId) {
     const getProduct = async () => {
       try {
         const response = await httpClient.get(`/products/${productId}`);
-        setFile(response.data.imgSrc);
-
         reset({
           name: response.data.name,
-          category: response.data.category.id,
+          category: response.data.category.id.toString(),
           price: response.data.price.toFixed(2),
           description: response.data.description,
-          stock: response.data.stock,
+          stock: response.data.stock.toString(),
+          file: response.data.imgSrc,
         });
       } catch (error) {
         console.error(error);
@@ -119,10 +116,14 @@ export default function useProductFormViewModel(productId) {
     onPriceChangeHandler,
     onStockChangleHandler,
     handleSubmit,
-    onDropHandler,
     file,
     register,
     errors,
     categories,
+    isDirty,
+    isSubmitting,
+    isValid,
+    control,
+    reset,
   };
 }
