@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import httpClient from "../../../../../services/axios";
+import { useEffect } from "react";
 import { currencyMask } from "./currencyMask";
 import currency from "currency.js";
 import { useNavigate } from "react-router-dom";
 import { schema } from "./consts";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ProductsService } from "../../../../../services/products/index";
+import { useQuery } from "@tanstack/react-query";
+import { CategoriesService } from "../../../../../services/categories";
 
 export default function useProductFormViewModel(productId) {
-  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const {
     register,
@@ -24,12 +25,23 @@ export default function useProductFormViewModel(productId) {
 
   const file = watch("file");
 
+  const { data: productData, isLoading } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: () => ProductsService.findById(productId),
+    enabled: productId ? true : false,
+  });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => CategoriesService.findAll(),
+  });
+
   async function uploadImage(id, file) {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        await httpClient.post(`/products/${id}/uploadImage`, formData);
+        await ProductsService.upload(id, formData);
       } catch (error) {
         alert("Ocorreu um erro");
       }
@@ -47,7 +59,7 @@ export default function useProductFormViewModel(productId) {
 
     if (productId) {
       try {
-        await httpClient.put(`/products/${productId}`, body);
+        await ProductsService.update(productId, body);
         if (typeof data.file !== "string") {
           await uploadImage(productId, data.file);
         }
@@ -58,7 +70,7 @@ export default function useProductFormViewModel(productId) {
       }
     } else {
       try {
-        const response = await httpClient.post("/products", body);
+        const response = await ProductsService.create(body);
         await uploadImage(response.data.id, data.file);
         alert(`Produto ${response.data.name} criado com sucesso!`);
         navigate("/dashboard/products");
@@ -80,36 +92,23 @@ export default function useProductFormViewModel(productId) {
   }
 
   useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const response = await httpClient.get("/categories");
-        setCategories(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getCategories();
-  }, []);
-
-  useEffect(() => {
-    if (!productId) return;
+    if (!productId || isLoading) return;
     const getProduct = async () => {
       try {
-        const response = await httpClient.get(`/products/${productId}`);
         reset({
-          name: response.data.name,
-          category: response.data.category.id.toString(),
-          price: response.data.price.toFixed(2),
-          description: response.data.description,
-          stock: response.data.stock.toString(),
-          file: response.data.imgSrc,
+          name: productData.data.name,
+          category: productData.data.category.id.toString(),
+          price: productData.data.price.toFixed(2),
+          description: productData.data.description,
+          stock: productData.data.stock.toString(),
+          file: productData.data.imgSrc,
         });
       } catch (error) {
         console.error(error);
       }
     };
     getProduct();
-  }, [productId]);
+  }, [productId, isLoading]);
 
   return {
     onSubmitHandler,
@@ -119,10 +118,11 @@ export default function useProductFormViewModel(productId) {
     file,
     register,
     errors,
-    categories,
+    categories: categoriesData?.data || [],
     isDirty,
     isSubmitting,
     isValid,
+    isLoading,
     control,
     reset,
   };

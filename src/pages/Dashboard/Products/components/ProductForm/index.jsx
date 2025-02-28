@@ -3,6 +3,7 @@ import DropFileZone from "./components/DropFileZone";
 import { BASE_URL } from "../../../../../consts";
 import useProductFormViewModel from "./useProductFormViewModel";
 import { Controller } from "react-hook-form";
+import Spinner from "../../../../../components/Spinner";
 
 export default function ProductForm(props) {
   const {
@@ -17,9 +18,12 @@ export default function ProductForm(props) {
     isDirty,
     isSubmitting,
     isValid,
+    isLoading,
     control,
     reset,
   } = useProductFormViewModel(props.productId);
+
+  if (isLoading) return <Spinner />;
 
   return (
     <form
@@ -125,7 +129,13 @@ export default function ProductForm(props) {
       >
         {props.productId ? "Editar" : "Cadastrar"}
       </button>
-      <button type="button" onClick={() => reset()} className="py-2 border rounded-lg">Resetar</button>
+      <button
+        type="button"
+        onClick={() => reset()}
+        className="py-2 border rounded-lg"
+      >
+        Resetar
+      </button>
     </form>
   );
 }
