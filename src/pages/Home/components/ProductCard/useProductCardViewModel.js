@@ -1,11 +1,10 @@
-import { useContext } from "react";
-import { cartContext } from "../../../../contexts/cartContext";
+import { useCartStore } from "../../../../stores/cartStore";
 
 export default function useProductCardViewModel(product) {
-  const { addItem } = useContext(cartContext);
+  const cartStore = useCartStore();
 
   function addToCart() {
-    addItem(product);
+    cartStore.addItem(product);
   }
 
   return {
