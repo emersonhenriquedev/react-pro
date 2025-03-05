@@ -3,11 +3,10 @@ import { IoCartOutline } from "react-icons/io5";
 import { useContext } from "react";
 import { authContext } from "../../contexts/authContext";
 import { useCartStore } from "../../stores/cartStore";
-import formatToCurrency from "../../utils/formatToCurrency";
 
 export default function Header() {
   const { user } = useContext(authContext);
-  const cartStore = useCartStore();
+  const totalItems = useCartStore((store) => store.totalItems);
   return (
     <header className="flex items-center justify-between">
       <Link to="/" className="text-3xl font-bold">
@@ -16,7 +15,7 @@ export default function Header() {
       <div className="flex items-center gap-x-3">
         <Link to="/cart">
           <IoCartOutline className="text-3xl text-gray-700" />
-          {formatToCurrency(cartStore.total)}
+          {totalItems}
         </Link>
         {user ? (
           <span>

@@ -1,8 +1,10 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
-const useCartStore = create((set) => ({
+const storeCallback = (set) => ({
   total: 0,
   items: [],
+  totalItems: 0,
   addItem: (product) =>
     set((state) => {
       const index = state.items.findIndex((item) => item.id === product.id);
@@ -17,22 +19,33 @@ const useCartStore = create((set) => ({
           }
           return item;
         });
-        // setItems(listUpdated);
-        return { items: listUpdated, total: calculateTotal(listUpdated) };
+
+        return {
+          items: listUpdated,
+          total: calculateTotal(listUpdated),
+          totalItems: getTotalItems(listUpdated),
+        };
       } else {
         const data = [
           ...state.items,
           { ...product, qty: 1, subtotal: product.price },
         ];
-        // updateLocalStorage(data);
 
-        return { items: data, total: calculateTotal(data) };
+        return {
+          items: data,
+          total: calculateTotal(data),
+          totalItems: getTotalItems(data),
+        };
       }
     }),
   removeItem: (id) =>
     set((state) => {
       const newItems = state.items.filter((item) => item.id != id);
-      return { items: newItems, total: calculateTotal(newItems) };
+      return {
+        items: newItems,
+        total: calculateTotal(newItems),
+        totalItems: getTotalItems(newItems),
+      };
     }),
   incrementItem: (id) =>
     set((state) => {
@@ -45,7 +58,11 @@ const useCartStore = create((set) => ({
             }
           : item
       );
-      return { items: updatedItems, total: calculateTotal(updatedItems) };
+      return {
+        items: updatedItems,
+        total: calculateTotal(updatedItems),
+        totalItems: getTotalItems(updatedItems),
+      };
     }),
   decrementItem: (id) =>
     set((state) => {
@@ -58,13 +75,28 @@ const useCartStore = create((set) => ({
             }
           : item
       );
-      return { items: updatedItems, total: calculateTotal(updatedItems) };
+      return {
+        items: updatedItems,
+        total: calculateTotal(updatedItems),
+        totalItems: getTotalItems(updatedItems),
+      };
     }),
   updateLocalStorage: () => {},
-}));
+});
+
+const useCartStore = create(
+  persist(storeCallback, {
+    name: "cart-storage",
+    storage: createJSONStorage(() => localStorage),
+  })
+);
 
 function calculateTotal(items) {
   return items.reduce((acc, curr) => curr.subtotal + acc, 0);
+}
+
+function getTotalItems(items) {
+  return items.reduce((acc, curr) => curr.qty + acc, 0);
 }
 
 export { useCartStore };

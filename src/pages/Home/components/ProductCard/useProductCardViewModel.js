@@ -1,10 +1,10 @@
 import { useCartStore } from "../../../../stores/cartStore";
 
 export default function useProductCardViewModel(product) {
-  const cartStore = useCartStore();
+  const { addItem } = useCartStore();
 
   function addToCart() {
-    cartStore.addItem(product);
+    addItem(product);
   }
 
   return {

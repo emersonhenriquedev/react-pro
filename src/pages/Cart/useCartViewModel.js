@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useCartStore } from "../../stores/cartStore";
 
 export default function useCartViewModel() {
-  const cartStore = useCartStore();
+  const { items, incrementItem, decrementItem, removeItem, total } =
+    useCartStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productId, setProductId] = useState(0);
 
   function onConfirmModal() {
     if (productId) {
-      // removeItem(productId);
-      cartStore.removeItem(productId);
+      removeItem(productId);
 
       setIsModalOpen(false);
       setProductId(null);
@@ -17,10 +17,10 @@ export default function useCartViewModel() {
   }
 
   return {
-    items: cartStore.items,
-    incrementItem: cartStore.incrementItem,
-    decrementItem: cartStore.decrementItem,
-    total: cartStore.total,
+    items,
+    incrementItem,
+    decrementItem,
+    total,
     isModalOpen,
     onConfirmModal,
     setIsModalOpen,
