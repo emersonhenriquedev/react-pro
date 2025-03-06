@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { schema } from "./consts";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
-import httpClient from "../../../../services/axios";
 import { useNavigate } from "react-router-dom";
+import { AuthService } from "../../../../services/auth";
 
 export default function RegisterCard() {
   const navigate = useNavigate();
@@ -23,8 +23,8 @@ export default function RegisterCard() {
         password: data.password,
       };
 
-      await httpClient.post("/auth/register", body);
-      const response = await httpClient.post("/auth/login", body);
+      await AuthService.register(body);
+      const response = await AuthService.login(body);
       localStorage.setItem("token", response.data.token);
       navigate("/");
     } catch (error) {
